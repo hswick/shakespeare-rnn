@@ -1,0 +1,6 @@
+(import '[data_reading CharacterIterator])
+(import '[datainput Shakespeare])
+(use 'clojure.reflect 'clojure.pprint)
+(def r (reflect Shakespeare))
+(count (:members r))
+(pprint (:members r))
