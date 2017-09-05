@@ -1,4 +1,5 @@
 (ns shakespeare-rnn.core
+  (:require [jutsu.ai.core :as ai])
   (:import [datainput CharacterIterator Shakespeare]
            [org.deeplearning4j.nn.conf NeuralNetConfiguration$Builder]
            [org.deeplearning4j.nn.api OptimizationAlgorithm]
@@ -26,41 +27,27 @@
 (def iter (Shakespeare/getShakespeareIterator mini-batch-size example-length))
 (def n-out (.totalOutcomes iter))
 
-(def conf (-> (NeuralNetConfiguration$Builder.)
-              (.optimizationAlgo (OptimizationAlgorithm/STOCHASTIC_GRADIENT_DESCENT))
-              (.iterations 1)
-              (.learningRate 0.1)
-              (.seed 12345)
-              (.regularization true)
-              (.l2 0.001)
-              (.weightInit (WeightInit/XAVIER))
-              (.updater (Updater/RMSPROP))
-              (.list)
-              (.layer 0 (-> (GravesLSTM$Builder.)
-                            (.nIn (.inputColumns iter))
-                            (.nOut lstm-layer-size)
-                            (.activation (Activation/TANH))
-                            (.build)))
-              (.layer 1 (-> (GravesLSTM$Builder.)
-                            (.nIn lstm-layer-size)
-                            (.nOut lstm-layer-size)
-                            (.activation (Activation/TANH))
-                            (.build)))
-              (.layer 2 (-> (RnnOutputLayer$Builder. (LossFunctions$LossFunction/MCXENT))
-                            (.activation (Activation/SOFTMAX))
-                            (.nIn lstm-layer-size)
-                            (.nOut n-out)
-                            (.build)))
-              (.backpropType (BackpropType/TruncatedBPTT))
-              (.tBPTTForwardLength tbptt-length)
-              (.tBPTTBackwardLength tbptt-length)
-              (.pretrain false)
-              (.backprop true)
-              (.build)))
+(def shakespeare-config
+  [:optimization-algo :sgd
+    :iterations 1
+    :learning-rate 0.1
+    :seed 12345
+    :regularization true
+    :l2 0.0001
+    :weight-init :xavier
+    :updater :rmsprop
+    :layers [[:graves-lstm [:n-in (.inputColumns iter) :n-out lstm-layer-size :activation :tanh]]
+             [:graves-lstm [:n-in lstm-layer-size :n-out lstm-layer-size :activation :tanh]]
+             [:rnn-output [:n-in lstm-layer-size :n-out n-out :activation :softmax :loss :mcxent]]]
+    :backprop-type :truncated-bptt
+    :tBPTT-backward-length tbptt-length
+    :tBPTT-forward-length tbptt-length
+    :pretrain false
+    :backprop true])
 
-(def net (MultiLayerNetwork. conf))
-(.init net)
-(.setListeners net (list (ScoreIterationListener. 1)))
+(def n (ai/network-config shakespeare-config))
+
+(def net (ai/initialize-net n))
 
 (def layers (.getLayers net))
 (def total-num-params (atom 0))

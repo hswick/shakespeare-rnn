@@ -5,7 +5,8 @@
                   [nightlight "1.6.5" :scope "test"]
                   [org.nd4j/nd4j-api "0.8.0"]
                   [org.nd4j/nd4j-native "0.8.0"]
-                  [org.deeplearning4j/deeplearning4j-core "0.8.0"]])
+                  [org.deeplearning4j/deeplearning4j-core "0.8.0"]
+                  [hswick/jutsu.ai "0.0.7"]])
 
 (require
   '[nightlight.boot :refer [nightlight]])
