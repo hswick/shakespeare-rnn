@@ -27,14 +27,14 @@
     :updater :rmsprop
     :layers [[:graves-lstm [:n-in (.inputColumns iter) :n-out lstm-layer-size :activation :tanh]]
              [:graves-lstm [:n-in lstm-layer-size :n-out lstm-layer-size :activation :tanh]]
-             [:rnn-output [:n-in lstm-layer-size :n-out n-out :activation :softmax :loss :mcxent]]]
+             [:rnn-output :mcxent [:n-in lstm-layer-size :n-out n-out :activation :softmax]]]
     :backprop-type :truncated-bptt
     :tBPTT-backward-length tbptt-length
     :tBPTT-forward-length tbptt-length
     :pretrain false
     :backprop true])
 
-(def n (ai/network-config shakespeare-config))
+(def n (ai/network shakespeare-config))
 
 (def net (ai/initialize-net n))
 
@@ -42,7 +42,7 @@
 (def total-num-params (atom 0))
 (doseq [i (range 0 (count layers))]
   (let [num-params (.numParams (nth layers i))]
-    (println (str "Number of pameters in layer " i ": " num-params))
+    (println (str "Number of parameters in layer " i ": " num-params))
     (reset! total-num-params (+ @total-num-params num-params))))
   
 (def mini-batch-number (atom 1))
