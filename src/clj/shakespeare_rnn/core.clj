@@ -1,17 +1,6 @@
 (ns shakespeare-rnn.core
   (:require [jutsu.ai.core :as ai])
-  (:import [datainput CharacterIterator Shakespeare]
-           [org.deeplearning4j.nn.conf NeuralNetConfiguration$Builder]
-           [org.deeplearning4j.nn.api OptimizationAlgorithm]
-           [org.deeplearning4j.nn.weights WeightInit]
-           [org.deeplearning4j.nn.conf Updater]
-           [org.deeplearning4j.nn.conf.layers GravesLSTM$Builder]
-           [org.nd4j.linalg.activations Activation]
-           [org.deeplearning4j.nn.conf.layers RnnOutputLayer$Builder]
-           [org.nd4j.linalg.lossfunctions LossFunctions$LossFunction]
-           [org.deeplearning4j.nn.conf BackpropType]
-           [org.deeplearning4j.nn.multilayer MultiLayerNetwork]
-           [org.deeplearning4j.optimize.listeners ScoreIterationListener]))
+  (:import [datainput CharacterIterator Shakespeare]))
 
 (def lstm-layer-size 200)
 (def mini-batch-size 32)
